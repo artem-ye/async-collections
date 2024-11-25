@@ -1,0 +1,16 @@
+{
+  "name": "async-roundrobin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^9.14.0",
+    "eslint-config-metarhia": "^9.1.1",
+    "prettier": "^3.3.3"
+  }
+}
