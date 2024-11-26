@@ -1,4 +1,6 @@
-const { RoundRobin } = require("./roundrobin.js");
+'use strict';
+
+const { RoundRobin } = require('./roundrobin.js');
 
 const factory = () => ({
   instance: factory.counter ? ++factory.counter : (factory.counter = 1),

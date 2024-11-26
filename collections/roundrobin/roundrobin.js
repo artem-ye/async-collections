@@ -1,5 +1,7 @@
 'use strict';
 
+const { setTimeout } = require('node:timers/promises');
+
 class RoundRobin {
   #instances = [];
   #size = 0;
@@ -34,13 +36,11 @@ class RoundRobin {
     this.#free++;
   }
 
-  #resolve(resolve, instance) {
-    const handler = () => {
-      resolve(instance);
-      this.#release();
-      this.#dequeue();
-    };
-    setTimeout(handler, this.#delay);
+  async #resolve(resolve, instance) {
+    await setTimeout(this.#delay);
+    resolve(instance);
+    console.log(new Date(), instance);
+    this.#release();
   }
 
   #enqueue(resolve) {
@@ -58,7 +58,11 @@ class RoundRobin {
   getInstance() {
     return new Promise((resolve) => {
       const instance = this.#next();
-      instance ? this.#resolve(resolve, instance) : this.#enqueue(resolve);
+      if (!instance) {
+        this.#enqueue(resolve);
+      } else {
+        this.#resolve(resolve, instance).then(() => this.#dequeue());
+      }
     });
   }
 }
