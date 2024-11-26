@@ -39,7 +39,6 @@ class RoundRobin {
       resolve(instance);
       this.#release();
       this.#dequeue();
-      console.log(Date(), instance);
     };
     setTimeout(handler, this.#delay);
   }
@@ -64,4 +63,4 @@ class RoundRobin {
   }
 }
 
-module.exports = {RoundRobin}
+module.exports = { RoundRobin };
