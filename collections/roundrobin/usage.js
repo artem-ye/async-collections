@@ -1,3 +1,5 @@
+'use strict';
+
 const { RoundRobin } = require('./roundrobin.js');
 
 const factory = () => ({

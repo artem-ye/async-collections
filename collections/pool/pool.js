@@ -1,3 +1,5 @@
+'use strict';
+
 const DEF_POOL_SIZE = 5;
 
 class AsyncPool {
@@ -67,9 +69,7 @@ class AsyncPool {
   }
 }
 
-const factory = () => {
-  return { obj: `obj ${++factory.counter}` };
-};
+const factory = () => ({ obj: `obj ${++factory.counter}` });
 factory.counter = 0;
 
 const main = async () => {
