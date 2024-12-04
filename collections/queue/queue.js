@@ -31,7 +31,7 @@ class Queue {
     if (this.#free < 1) return void this.#enqueue(payload);
 
     await this.#feed(payload);
-    if (this.#queue.length > 0 && this.#free > 0) this.#dequeue();
+    this.#dequeue();
   }
 
   async #feed(payload) {
@@ -45,11 +45,14 @@ class Queue {
   }
 
   #dequeue() {
-    this.#free--;
-    setTimeout(() => {
-      const payload = this.#queue.shift();
-      this.#process(payload);
-    }, 0);
+    if (this.#queue.length > 0 && this.#free > 0) {
+      this.#free--;
+      setTimeout(() => {
+        const payload = this.#queue.shift();
+        this.#process(payload);
+        this.#dequeue();
+      }, 0);
+    }
   }
 
   async #process(payload) {
