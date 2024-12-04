@@ -10,6 +10,7 @@ class Queue {
   #onSuccess = null;
   #onFailure = null;
   #onDrain = null;
+  #onQueue = null;
 
   #free = 0;
   #queue = [];
@@ -17,16 +18,17 @@ class Queue {
   constructor(options) {
     this.#free = this.#concurrency = options.concurrency || 5;
 
-    const { execute, done, success, failure, drain } = options;
+    const { execute, done, queue, success, failure, drain } = options;
     this.#handler = execute;
     this.#onDone = done || nop;
+    this.#onQueue = queue || nop;
     this.#onSuccess = success || nop;
     this.#onFailure = failure || nop;
     this.#onDrain = drain || nop;
   }
 
   async add(payload) {
-    if (this.#free < 1) return void this.#queue.push(payload);
+    if (this.#free < 1) return void this.#enqueue(payload);
 
     await this.#feed(payload);
     if (this.#queue.length > 0 && this.#free > 0) this.#dequeue();
@@ -35,6 +37,11 @@ class Queue {
   async #feed(payload) {
     this.#free--;
     await this.#process(payload);
+  }
+
+  #enqueue(payload) {
+    this.#queue.push(payload);
+    this.#onQueue(payload);
   }
 
   #dequeue() {
@@ -74,6 +81,9 @@ const queue = new Queue({
   },
   failure: (err, task) => {
     console.log('Failure:', { err, task });
+  },
+  queue: (task) => {
+    console.log('Queued:', { task });
   },
   drain: () => {
     console.log('Queue drain');
