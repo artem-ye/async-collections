@@ -29,7 +29,7 @@ class Queue {
     if (this.#free < 1) return void this.#queue.push(payload);
 
     await this.#feed(payload);
-    if (this.#queue.length > 0 && this.#free > 0) this.#deque();
+    if (this.#queue.length > 0 && this.#free > 0) this.#dequeue();
   }
 
   async #feed(payload) {
@@ -37,7 +37,7 @@ class Queue {
     await this.#process(payload);
   }
 
-  #deque() {
+  #dequeue() {
     this.#free--;
     setTimeout(() => {
       const payload = this.#queue.shift();

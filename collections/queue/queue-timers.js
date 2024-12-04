@@ -34,7 +34,7 @@ class Queue {
     if (this.#free < 1) return void this.#enqueue(payload);
 
     await this.#feed(payload);
-    this.#deque();
+    this.#dequeue();
   }
 
   async #feed(payload) {
@@ -50,13 +50,13 @@ class Queue {
     this.#queue.push(task);
   }
 
-  #deque() {
+  #dequeue() {
     if (this.#queue.length === 0 || this.#free < 1) return;
 
     const { payload, timeStamp } = this.#queue.shift();
     if (Date.now() - timeStamp > this.#pendingTimeout) {
       this.#resolve(new Error('Pending timout'), payload);
-      this.#deque();
+      this.#dequeue();
     }
 
     this.#free--;
