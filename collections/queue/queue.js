@@ -45,14 +45,14 @@ class Queue {
   }
 
   #dequeue() {
-    if (this.#queue.length > 0 && this.#free > 0) {
-      this.#free--;
-      setTimeout(() => {
-        const payload = this.#queue.shift();
-        this.#process(payload);
-        this.#dequeue();
-      }, 0);
-    }
+    if (this.#queue.length < 1 || this.#free < 1) return;
+
+    this.#free--;
+    setTimeout(() => {
+      const payload = this.#queue.shift();
+      this.#process(payload);
+      this.#dequeue();
+    }, 0);
   }
 
   async #process(payload) {
@@ -106,5 +106,7 @@ for (let i = 0; i < 10; i++) {
   console.log('Add:', task);
   queue.add(task);
 }
+
+setTimeout(() => console.log('DONE'), 7000);
 
 // main();
