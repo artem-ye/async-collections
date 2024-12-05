@@ -29,9 +29,7 @@ class Queue {
 
   async add(payload) {
     if (this.#free < 1) return void this.#enqueue(payload);
-
     await this.#feed(payload);
-    this.#dequeue();
   }
 
   async #feed(payload) {
@@ -51,7 +49,6 @@ class Queue {
     setTimeout(() => {
       const payload = this.#queue.shift();
       this.#process(payload);
-      this.#dequeue();
     }, 0);
   }
 
@@ -63,13 +60,19 @@ class Queue {
     } catch (err) {
       error = err;
     }
-    error ? this.#onFailure(error, payload) : this.#onSuccess(result);
-    this.#onDone(error, payload);
-
     this.#free++;
+
+    error ? this.#onFailure(error, payload) : this.#onSuccess(result);
+    this.#onDone(error, {
+      ...payload,
+      queueLen: this.#queue.length,
+      free: this.#free,
+    });
     if (this.#free === this.#concurrency && this.#queue.length === 0) {
       this.#onDrain();
     }
+
+    this.#dequeue();
   }
 }
 
@@ -93,20 +96,8 @@ const queue = new Queue({
   },
 });
 
-// const main = async () => {
-//   for (let i = 0; i < 10; i++) {
-//     const task = { name: `Task${i}`, interval: i * 10 };
-//     console.log('Add:', task);
-//     await queue.add(task);
-//   }
-// };
-
 for (let i = 0; i < 10; i++) {
-  const task = { name: `Task${i}`, interval: i * 10 };
+  const task = { name: `Task${i}`, interval: i * 1000 };
   console.log('Add:', task);
   queue.add(task);
 }
-
-setTimeout(() => console.log('DONE'), 7000);
-
-// main();
