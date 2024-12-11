@@ -55,7 +55,7 @@ class Queue {
 
     const { payload, timeStamp } = this.#queue.shift();
     if (Date.now() - timeStamp > this.#pendingTimeout) {
-      this.#resolve(new Error('Pending timout'), payload);
+      this.#resolve(new Error('Pending timeout'), payload);
       this.#dequeue();
     }
 
